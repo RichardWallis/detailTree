@@ -1,0 +1,216 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <style>
+        .dt {
+            display: inline-block;
+            position: relative;
+        }
+
+        .dt[open] {
+            background: red;
+        }
+
+        .dv {
+            display: inline-block;
+            background: green;
+        }
+
+        .wrap {
+            display: inline-block;
+            position: relative;
+        }
+
+        details.dttDetails{
+            display: inline-block;
+        }
+        details.dttDetails summary{
+            cursor:pointer;
+            border: none;
+            list-style: none;
+        }
+        details.dttDetails summary::-webkit-details-marker{
+            display: none;
+        }
+        details.dttDetails summary:after{
+            content: "+";
+        }
+        details.dttDetails[open] summary:after{
+            content: "-";
+        }
+
+
+        .dttBranch {
+            display: block;
+        }
+
+        .dttBranch .dttLabel {
+            display: inline-block;
+            vertical-align: top;
+            cursor: pointer;
+        }
+        .dttBranch .dttLabel::before {
+            content: "";
+        }
+        
+        .dttBranch[dttState='treeopen'] .dttLabel::before {
+            content: url(dtt-down-arrow.png);
+            position: relative;
+        }
+        .dttBranch[dttState='treeclosed'] .dttLabel::before {
+            content: url(dtt-right-arrow.png);
+            position: relative;
+        }
+        .dttLeaf span::before,
+        .dttLeaf a::before
+         {
+            content: url(dtt-bullet.png);
+            position: relative;
+        }
+
+        ul.dttTree {
+            list-style-type: none;
+        }
+    </style>
+    <script>
+    window.addEventListener('load', function () {
+
+        var branches = document.getElementsByClassName("dttBranch");
+            for (var i = 0; i < branches.length; i++) {
+                branches[i].addEventListener("click",dttBranchToggle);
+            }    
+        
+         var dets = document.getElementsByClassName("dttDetails");
+            for (var i = 0; i < dets.length; i++) {
+                det = dets[i];
+                det.addEventListener("toggle",dttToggleCheck,i);
+                summs = det.getElementsByTagName("summary");
+                 for(var j = 0;j < summs.length;j++){
+                    summs[j].addEventListener("keydown",dttSummaryKey);
+                }
+
+        }
+    
+    });
+    function dttBranchToggle(event){
+        node = event.currentTarget;
+        var kids = node.childNodes;
+        for(var i=0;i < kids.length;i++){
+            kid = kids[i];
+            classes = kid.classList;
+            if(classes && classes.contains("dttDetails")){
+                if (kid.open){
+                    kid.open = false;
+                }else{
+                    kid.open = true;
+                }
+                break;
+            }
+        }
+    }
+
+    function dttSummaryKey(event){
+        var key = event.keyCode
+        console.log("Key: " + key)
+        keyCode = Object.freeze({
+            RETURN: 13,
+            SPACE: 32,
+            PAGEUP: 33,
+            PAGEDOWN: 34,
+            END: 35,
+            HOME: 36,
+            LEFT: 37,
+            UP: 38,
+            RIGHT: 39,
+            DOWN: 40
+        });
+
+        node = event.currentTarget;
+        details = node.parentNode;
+        if(details.classList.contains("dttDetails")){
+            switch (key) {
+                case keyCode.RETURN:
+                case keyCode.RIGHT:
+                case keyCode.DOWN:
+                    if(!details.open){
+                        details.open = true;
+                    }
+                    break;
+                case keyCode.UP:
+                case keyCode.LEFT:
+                    if(details.open){
+                            details.open = false;
+                        }
+                    break;
+            }
+        }
+
+    }
+
+    function dttToggleCheck(event){
+         node = event.currentTarget;
+        var state = "treeclosed";
+        if(node.open){
+            state = "treeopen"
+        }
+        var parent = node.parentNode;
+        var parentBranch = null;
+        while (parent){
+            if (parent.classList.contains("dttBranch")){
+                parentBranch = parent;
+                break;
+            }
+        }
+        if(parentBranch){
+            parentBranch.setAttribute("dttState",state)
+        }
+    }
+  
+    </script>
+
+
+    <div>
+        <ul class="dttTree">
+            <li>Text line 1</li>
+            <li>Text line 2
+                <details class="dt">
+                    <ul>
+                        <li>Insert 1 </li>
+                        <li>Isert 2 </li>
+                        <li>Insert 3</li>
+                    </ul>
+                </details>
+            </li>
+            <li class="dttBranch" dttState="treeclosed">
+                    <div class="dttLabel">
+                        <a href="http://schema.org">Schema.org</a>
+                    </div>
+                    <details class="dttDetails">
+                        <summary></summary>
+
+                        Insert 1 <br />
+                        Isert 2 <br />
+                        Insert 3<br />
+
+                    </details>
+             </li>
+             <li class="dttLeaf"><span>Text line 4</span></li>
+             <li class="dttLeaf"><a href="http://schema.org">Text line 4a</a></li>
+             <li>Text line 5
+                <div class="dv">
+
+                    Insert 1 <br />
+                    Isert 2 <br />
+                    Insert 3<br />
+
+                </div>
+            </li>
+            <li>Text line 6</li>
+        </ul>
+    </div>
+</body>
+
+</html>
