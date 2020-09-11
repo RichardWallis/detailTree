@@ -5,7 +5,7 @@ DetailTree is a JavaScript/CSS module to create a HTML tree widget.
 A Tree widget which has expand/collapse capabilities that can have either a link (A href) or text (span) 
 as any node on the tree.
 
-It utilises <ul> <li> <detail> and <summary> html elements and is navigable using screen reader tools.
+It utilises ```<ul>```, ```<li>```, ```<detail>```, and ```<summary>``` html elements and is navigable using screen reader tools.
    
 Usage
 =====
